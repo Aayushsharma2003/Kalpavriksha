@@ -1,0 +1,71 @@
+   
+#include <stdio.h>
+
+void swap(int* a, int* b);
+void quick_Sort(int arr[], int low, int high);
+int partition(int arr[], int low, int high);
+void print_Array(int arr[], int arr_size);
+
+ 
+
+int main() {
+    int arr[] = {5 , 90, 50, 27, 78, 19, 10, 55};
+    int arr_size = sizeof(arr) / sizeof(arr[0]);
+    
+    printf("Before Sorting : \n");
+    print_Array(arr,arr_size);
+
+    quick_Sort(arr, 0, arr_size - 1);
+    printf("After Sorting : \n");
+    print_Array(arr,arr_size);
+    
+    return 0;
+}
+
+int partition(int arr[], int low, int high) {
+    
+     
+    int pivot_element = arr[high];
+    
+    
+    int itr = low - 1;
+ 
+    for (int j = low; j <= high - 1; j++) {
+        if (arr[j] < pivot_element) {
+            itr++;
+            swap(&arr[itr], &arr[j]);
+        }
+    }
+    
+    
+    swap(&arr[itr + 1], &arr[high]);  
+    return itr + 1;
+}
+
+ 
+void quick_Sort(int arr[], int low, int high) {
+    if (low < high) {
+        
+         
+        int p = partition(arr, low, high);
+
+        
+        quick_Sort(arr, low, p - 1);
+        quick_Sort(arr, p + 1, high);
+    }
+}
+
+void swap(int* a, int* b) {
+    int temp = *a;
+    *a = *b;
+    *b = temp;
+}
+ 
+void print_Array(int arr[], int arr_size)
+{
+    int itr;
+    for (itr = 0; itr < arr_size; itr++)
+        printf("%d ", arr[itr]);
+    printf("\n");
+}
+
