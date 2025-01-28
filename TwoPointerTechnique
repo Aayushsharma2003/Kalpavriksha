@@ -1,0 +1,33 @@
+#include <stdio.h>
+
+int removeDuplicates(int arr[], int arr_size) {
+    if (arr_size == 0) return 0;
+
+    int slow_pointer = 0; 
+
+    for (int fast_pointer = 1; fast_pointer < arr_size; fast_pointer++) { 
+        if (arr[slow_pointer] != arr[fast_pointer]) {
+            slow_pointer++;
+            arr[slow_pointer] = arr[fast_pointer];
+        }
+    }
+    int length_of_unique_elements=slow_pointer+1;
+
+    return  length_of_unique_elements;
+}
+
+int main() {
+    int arr[] = {1, 1, 2, 2, 3, 4, 4};
+    int arr_size = sizeof(arr) / sizeof(arr[0]);
+
+    int newLength = removeDuplicates(arr, arr_size);
+
+    printf("New length: %d\n", newLength);
+    printf("Modified array: ");
+    for (int itr = 0; itr < newLength; itr++) {
+        printf("%d ", arr[itr]);
+    }
+    printf("\n");
+
+    return 0;
+}
