@@ -1,0 +1,38 @@
+ 
+#include<stdio.h>
+
+void binarySearch(int arr[], int arr_size ,int key);
+int main() {
+    int arr[] = {10,20,30,40,50,60,70,80,90};
+    int arr_size = sizeof(arr) / sizeof(arr[0]);
+    int key=90;
+    binarySearch(arr, arr_size , key);
+    
+    
+    return 0;
+}
+
+void binarySearch(int arr[], int arr_size ,int key)
+{
+    int low=0;
+    int high=arr_size-1;
+    int mid=low+(high-low)/2;
+
+    while(low<=high)
+    {
+        mid=low+(high-low)/2;
+        if(arr[mid]==key)
+        {
+            printf("key %d found at index : %d\n",arr[mid],mid);
+            return;
+        }
+        else if(arr[mid] > key)
+        {
+            high--;
+        }
+        else if(arr[mid]<key)
+        low++;
+    }
+    printf("not found\n");
+    
+}
