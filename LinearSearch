@@ -1,0 +1,30 @@
+#include <stdio.h>
+
+void linearSearch(int arr[] ,int arr_size,  int key);
+
+int main() {
+    int arr[] = {5 , 90, 50, 27, 78, 19, 10, 55};
+    int arr_size = sizeof(arr) / sizeof(arr[0]);
+    int key=90;
+    linearSearch(arr, arr_size , key);
+    
+    
+    return 0;
+}
+
+void linearSearch(int arr[] ,int arr_size, int key)
+{
+    int itr;
+    for(itr=0 ; itr<arr_size ; itr++)
+    {
+        if(arr[itr]==key)
+        {
+            printf("Key found at index : %d\n",itr);
+            return;
+            
+        }
+    }
+    printf("key not found\n");
+    
+    
+}
