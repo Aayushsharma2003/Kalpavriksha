@@ -1,0 +1,158 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+ 
+struct Node {
+    int val;
+    struct Node* next;
+    struct Node* prev;
+    struct Node* child;
+};
+
+ 
+struct Node* createNode(int value) {
+    struct Node* newNode = (struct Node*)malloc(sizeof(struct Node));
+    newNode->val = value;
+    newNode->next = NULL;
+    newNode->prev = NULL;
+    newNode->child = NULL;
+    return newNode;
+}
+
+ 
+void insertNode(struct Node** head, int value) {
+    struct Node* newNode = createNode(value);
+    if (*head == NULL) {
+        *head = newNode;
+        return;
+    }
+
+    struct Node* current = *head;
+    while (current->next) {
+        current = current->next;
+    }
+    current->next = newNode;
+    newNode->prev = current;
+}
+
+ 
+void insertChild(struct Node* parent, struct Node* childHead) {
+    if (!parent) return;
+    parent->child = childHead;
+}
+ 
+struct Node* flatten(struct Node* head) {
+    if (!head) return NULL;
+    struct Node* current = head;
+    while (current) {
+        if (current->child) {
+            struct Node* next = current->next;
+            struct Node* child = flatten(current->child);
+            current->next = child;
+            child->prev = current;
+            struct Node* temp = child;
+            while (temp->next) temp = temp->next;
+            temp->next = next;
+            if (next) next->prev = temp;
+            current->child = NULL;
+        }
+        current = current->next;
+    }
+    return head;
+}
+
+ 
+void collectValues(struct Node* head, int* arr, int* index) {
+    while (head) {
+        arr[*index] = head->val;
+        (*index)++;
+        head = head->next;
+    }
+}
+
+ 
+struct Node* rebuildList(int* arr, int size) {
+    if (size == 0) return NULL;
+    struct Node* head = createNode(arr[0]);
+    struct Node* current = head;
+    for (int i = 1; i < size; i++) {
+        current->next = createNode(arr[i]);
+        current->next->prev = current;
+        current = current->next;
+    }
+    return head;
+}
+
+ 
+struct Node* flattenAndSort(struct Node* head) {
+    head = flatten(head);
+    int size = 0;
+    struct Node* current = head;
+    while (current) {
+        size++;
+        current = current->next;
+    }
+
+    int* arr = (int*)malloc(sizeof(int) * size);
+    int index = 0;
+    collectValues(head, arr, &index);
+
+     
+    for (int i = 0; i < size - 1; i++) {
+        for (int j = i + 1; j < size; j++) {
+            if (arr[i] > arr[j]) {
+                int temp = arr[i];
+                arr[i] = arr[j];
+                arr[j] = temp;
+            }
+        }
+    }
+
+    struct Node* sorted = rebuildList(arr, size);
+    free(arr);
+    return sorted;
+}
+ 
+void printList(struct Node* head) {
+    while (head) {
+        printf("%d -> ", head->val);
+        head = head->next;
+    }
+    printf("NULL\n");
+}
+
+
+void initializeList(struct Node** head) {
+ 
+    insertNode(head, 1);
+    insertNode(head, 2);
+    insertNode(head, 3);
+    insertNode(head, 4);
+    insertNode(head, 5);
+    insertNode(head, 6);
+
+     
+    struct Node* child1 = NULL;
+    insertNode(&child1, 7);
+    insertNode(&child1, 8);
+    insertNode(&child1, 9);
+    insertNode(&child1, 10);
+
+    struct Node* child2 = NULL;
+    insertNode(&child2, 11);
+    insertNode(&child2, 12);
+
+    insertChild(*head, child1);  
+    insertChild(child1->next, child2);  
+}
+
+ 
+int main() {
+    struct Node* head = NULL;
+    initializeList(&head);  
+
+  
+    printList(flattenAndSort(head));
+
+    return 0;
+}
