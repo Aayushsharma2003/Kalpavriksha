@@ -1,0 +1,136 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+#define MAX_SIZE 100
+
+typedef struct Stack {
+    int arr[MAX_SIZE];
+    int top;
+} Stack;
+
+void initStack(Stack* stack) {
+    stack->top = -1;
+}
+
+void push(Stack* stack, int element) {
+    if (stack->top == MAX_SIZE - 1) {
+        printf("Error: Stack overflow! Cannot push %d\n", element);
+    } else {
+        stack->arr[++(stack->top)] = element;
+        printf("%d successfully pushed to stack\n", element);
+    }
+}
+
+int pop(Stack* stack) {
+    if (stack->top == -1) {
+        printf("Error: Stack underflow! Cannot pop.\n");
+        return -1;
+    } else {
+        return stack->arr[(stack->top)--];
+    }
+}
+
+int peek(Stack* stack) {
+    if (stack->top == -1) {
+        printf("Error: Stack is empty! Cannot peek.\n");
+        return -1;
+    } else {
+        return stack->arr[stack->top];
+    }
+}
+
+int isEmpty(Stack* stack) {
+    return stack->top == -1;
+}
+
+int stackSize(Stack* stack) {
+    return stack->top + 1;
+}
+
+void displayMenu() {
+    printf("\n------ Stack Operations ------\n");
+    printf("1. Push\n");
+    printf("2. Pop\n");
+    printf("3. Peek\n");
+    printf("4. Is Empty?\n");
+    printf("5. Stack Size\n");
+    printf("6. Exit\n");
+}
+
+int getValidChoice() {
+    int choice;
+    while (1) {
+        printf("Enter your choice: ");
+        if (scanf("%d", &choice) != 1) {
+            while (getchar() != '\n');
+            printf("Invalid input! Please enter a valid number.\n");
+            continue;
+        }
+        if (choice >= 1 && choice <= 6) {
+            return choice;
+        } else {
+            printf("Invalid choice! Please enter a number between 1 and 6.\n");
+        }
+    }
+}
+
+int main() {
+    Stack stack;
+    int choice, element, numOperations;
+
+    initStack(&stack);
+
+    printf("Enter the number of operations to perform: ");
+    while (scanf("%d", &numOperations) != 1 || numOperations <= 0 || numOperations > MAX_SIZE) {
+        while (getchar() != '\n');
+        printf("Invalid input! Please enter a valid number of operations (1 to %d): ", MAX_SIZE);
+    }
+
+    printf("Starting stack operations...\n");
+
+    for (int i = 0; i < numOperations; i++) {
+        displayMenu();
+        choice = getValidChoice();
+
+        switch(choice) {
+            case 1:
+                printf("Enter element to push: ");
+                if (scanf("%d", &element) == 1) {
+                    push(&stack, element);
+                } else {
+                    while (getchar() != '\n');
+                    printf("Invalid input! Please enter a valid integer.\n");
+                }
+                break;
+            case 2:
+                element = pop(&stack);
+                if (element != -1) {
+                    printf("Popped element: %d\n", element);
+                }
+                break;
+            case 3:
+                element = peek(&stack);
+                if (element != -1) {
+                    printf("Top element: %d\n", element);
+                }
+                break;
+            case 4:
+                if (isEmpty(&stack)) {
+                    printf("Stack is empty.\n");
+                } else {
+                    printf("Stack is not empty.\n");
+                }
+                break;
+            case 5:
+                printf("Stack size: %d\n", stackSize(&stack));
+                break;
+            case 6:
+                printf("Exiting program...\n");
+                return 0;
+            default:
+                printf("Invalid choice! Please try again.\n");
+        }
+    }
+
+    return 0;
+}
