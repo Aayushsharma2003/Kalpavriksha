@@ -1,0 +1,164 @@
+ #include <stdio.h>
+#include <stdlib.h>
+
+typedef struct Node {
+    int data;
+    struct Node* next;
+} Node;
+
+typedef struct Queue {
+    Node* front;
+    Node* rear;
+    int size;
+} Queue;
+
+void initQueue(Queue* queue) {
+    queue->front = NULL;
+    queue->rear = NULL;
+    queue->size = 0;
+}
+
+void enqueue(Queue* queue, int element) {
+    Node* newNode = (Node*)malloc(sizeof(Node));
+    if (newNode == NULL) {
+        printf("Error: Memory allocation failed! Cannot enqueue %d\n", element);
+        return;
+    }
+
+    newNode->data = element;
+    newNode->next = NULL;
+
+    if (queue->rear == NULL) {
+        queue->front = newNode;
+        queue->rear = newNode;
+    } else {
+        queue->rear->next = newNode;
+        queue->rear = newNode;
+    }
+
+    queue->size++;
+    printf("%d successfully enqueued to queue\n", element);
+}
+
+int dequeue(Queue* queue) {
+    if (queue->front == NULL) {
+        printf("Error: Queue underflow! Cannot dequeue.\n");
+        return -1;
+    }
+
+    Node* temp = queue->front;
+    int dequeuedValue = temp->data;
+    queue->front = queue->front->next;
+
+    if (queue->front == NULL) {
+        queue->rear = NULL;
+    }
+
+    free(temp);
+    queue->size--;
+    return dequeuedValue;
+}
+
+int peek(Queue* queue) {
+    if (queue->front == NULL) {
+        printf("Error: Queue is empty! Cannot peek.\n");
+        return -1;
+    }
+    return queue->front->data;
+}
+
+int isEmpty(Queue* queue) {
+    return queue->front == NULL;
+}
+
+int queueSize(Queue* queue) {
+    return queue->size;
+}
+
+void displayMenu() {
+    printf("\n------ Queue Operations ------\n");
+    printf("1. Enqueue\n");
+    printf("2. Dequeue\n");
+    printf("3. Peek\n");
+    printf("4. Is Empty?\n");
+    printf("5. Queue Size\n");
+    printf("6. Exit\n");
+}
+
+int getValidChoice() {
+    int choice;
+    while (1) {
+        printf("Enter your choice: ");
+        if (scanf("%d", &choice) != 1) {
+            while (getchar() != '\n');
+            printf("Invalid input! Please enter a valid number.\n");
+            continue;
+        }
+        if (choice >= 1 && choice <= 6) {
+            return choice;
+        } else {
+            printf("Invalid choice! Please enter a number between 1 and 6.\n");
+        }
+    }
+}
+
+int main() {
+    Queue queue;
+    int choice, element, numOperations;
+
+    initQueue(&queue);
+
+    printf("Enter the number of operations to perform: ");
+    while (scanf("%d", &numOperations) != 1 || numOperations <= 0) {
+        while (getchar() != '\n');
+        printf("Invalid input! Please enter a valid number of operations: ");
+    }
+
+    printf("Starting queue operations...\n");
+
+    for (int i = 0; i < numOperations; i++) {
+        displayMenu();
+        choice = getValidChoice();
+
+        switch(choice) {
+            case 1:
+                printf("Enter element to enqueue: ");
+                if (scanf("%d", &element) == 1) {
+                    enqueue(&queue, element);
+                } else {
+                    while (getchar() != '\n');
+                    printf("Invalid input! Please enter a valid integer.\n");
+                }
+                break;
+            case 2:
+                element = dequeue(&queue);
+                if (element != -1) {
+                    printf("Dequeued element: %d\n", element);
+                }
+                break;
+            case 3:
+                element = peek(&queue);
+                if (element != -1) {
+                    printf("Front element: %d\n", element);
+                }
+                break;
+            case 4:
+                if (isEmpty(&queue)) {
+                    printf("Queue is empty.\n");
+                } else {
+                    printf("Queue is not empty.\n");
+                }
+                break;
+            case 5:
+                printf("Queue size: %d\n", queueSize(&queue));
+                break;
+            case 6:
+                printf("Exiting program...\n");
+                return 0;
+            default:
+                printf("Invalid choice! Please try again.\n");
+        }
+    }
+
+    return 0;
+}
