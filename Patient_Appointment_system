@@ -1,0 +1,134 @@
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <limits.h>
+
+struct patient
+{
+    int id;
+    char *severity;
+    struct patient *next;
+};
+
+struct patient *head = NULL, *critical = NULL, *serious = NULL, *stable = NULL;
+
+struct patient *insert(struct patient *head, int data, char s[100])
+{
+    struct patient *newNode = malloc(sizeof(struct patient));
+    newNode->next = NULL;
+    newNode->id = data;
+    newNode->severity = (char *)malloc(sizeof(char) * 100);
+    strcpy(newNode->severity, s);
+    if (head == NULL)
+    {
+        head = newNode;
+    }
+    else
+    {
+        struct patient *temp = head;
+        while (temp->next != NULL)
+        {
+            temp = temp->next;
+        }
+        temp->next = newNode;
+    }
+
+    return head;
+}
+
+void print(struct patient *head)
+{
+    struct patient *temp = head;
+    while (temp != NULL)
+    {
+        printf("%d %s\n", temp->id, temp->severity);
+        temp = temp->next;
+    }
+}
+struct patient *merge(struct patient *head1, struct patient *head2, struct patient *head3)
+{
+    struct patient *head = head1;
+    struct patient *temp = head1;
+
+    while (temp->next != NULL)
+    {
+        temp = temp->next;
+    }
+    temp->next = head2;
+
+    temp = head2;
+
+    while (temp->next != NULL)
+    {
+        temp = temp->next;
+    }
+    temp->next = head3;
+
+    return head;
+}
+int isPatientExists(struct patient *head, int data)
+{
+    struct patient *temp = head;
+    while (temp != NULL)
+    {
+        if (temp->id == data)
+        {
+            printf("data already exists!!!\n");
+            exit(0);
+        }
+        temp = temp->next;
+    }
+    return 0;
+}
+
+
+
+int main()
+{
+    int n;
+    if (!(scanf("%d", &n) == 1))
+    {
+        printf("Invalid Data\n");
+        exit(0);
+    }
+    for (int i = 0; i < n; i++)
+    {
+        int data;
+        char s[100];
+
+        if (!(scanf("%d", &data) == 1))
+        {
+            printf("Invalid ID\n");
+            exit(0);
+        }
+        scanf("%s", s);
+        if ((isPatientExists(critical, data) || isPatientExists(serious, data)) || isPatientExists(stable, data))
+        {
+        }
+        else
+        {
+            if (!strcmp(s, "critical"))
+                critical = insert(critical, data, s);
+
+            else if (!strcmp(s, "serious"))
+                serious = insert(serious, data, s);
+
+            else if (!strcmp(s, "stable"))
+                stable = insert(stable, data, s);
+
+            else
+            {
+                printf("Invalid Severity\n");
+
+                exit(0);
+            }
+        }
+    }
+
+    head = merge(critical, serious, stable);
+
+    print(head);
+
+    return 0;
+}
