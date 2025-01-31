@@ -1,125 +1,133 @@
-#include<stdio.h>
-#include<stdlib.h>
-#include<string.h>
 
-struct node{
-int data;
-char *severity;
-struct node* next;
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <limits.h>
+
+struct patient
+{
+    int id;
+    char *severity;
+    struct patient *next;
 };
 
-struct node* head=NULL , *critical=NULL,*serious=NULL,*stable=NULL;
-struct node* insert(struct node* head , int data , char s[100])
+struct patient *head = NULL, *critical = NULL, *serious = NULL, *stable = NULL;
+
+struct patient *insert(struct patient *head, int data, char s[100])
 {
-    struct node* newNode=malloc(sizeof(struct node));
-    newNode->next=NULL;
-    newNode->data=data;
-    newNode->severity=(char*)malloc(sizeof(char)*100);
-    strcpy(newNode->severity,s);
-    if(head==NULL)
+    struct patient *newNode = malloc(sizeof(struct patient));
+    newNode->next = NULL;
+    newNode->id = data;
+    newNode->severity = (char *)malloc(sizeof(char) * 100);
+    strcpy(newNode->severity, s);
+    if (head == NULL)
     {
-        head=newNode;
+        head = newNode;
     }
-    else{
-        struct node* temp=head;
-        while(temp->next != NULL)
+    else
+    {
+        struct patient *temp = head;
+        while (temp->next != NULL)
         {
-            temp=temp->next;
+            temp = temp->next;
         }
-        temp->next=newNode;
+        temp->next = newNode;
     }
-
-
 
     return head;
 }
 
-void print(struct node* head)
+void print(struct patient *head)
 {
-    struct node* temp=head;
-    while(temp!= NULL)
+    struct patient *temp = head;
+    while (temp != NULL)
     {
-        printf("%d %s\n",temp->data , temp->severity);
-        temp=temp->next;
+        printf("%d %s\n", temp->id, temp->severity);
+        temp = temp->next;
     }
-
-
 }
-struct node* merge(struct node* head1 , struct node* head2 , struct node* head3)
+struct patient *merge(struct patient *head1, struct patient *head2, struct patient *head3)
 {
-    struct node* head=NULL;
-    struct node* temp=head1;
+    struct patient *head = head1;
+    struct patient *temp = head1;
 
-    while(temp->next != NULL)
+    while (temp->next != NULL)
     {
-        temp= temp->next;
+        temp = temp->next;
     }
-    temp->next=head2;
+    temp->next = head2;
 
-    temp=head2;
+    temp = head2;
 
-    while(temp->next != NULL)
+    while (temp->next != NULL)
     {
-        temp= temp->next;
+        temp = temp->next;
     }
-    temp->next=head3;
+    temp->next = head3;
 
     return head;
-
 }
-int dataExists(struct node* head,int data)
+int isPatientExists(struct patient *head, int data)
 {
-    struct node* temp=head;
-    while(temp!=NULL)
+    struct patient *temp = head;
+    while (temp != NULL)
     {
-        if(temp->data==data){
-            printf("data already exists!!!\nRe Input data!!\n");
-        return 1;
+        if (temp->id == data)
+        {
+            printf("data already exists!!!\n");
+            exit(0);
         }
-        temp=temp->next;
+        temp = temp->next;
     }
     return 0;
 }
+
+
+
 int main()
 {
     int n;
-    scanf("%d",&n);
-    for(int i=0;i<n;i++)
+    if (!(scanf("%d", &n) == 1))
+    {
+        printf("Invalid Data\n");
+        exit(0);
+    }
+    for (int i = 0; i < n; i++)
     {
         int data;
         char s[100];
 
-        scanf("%d",&data);
-        scanf("%s",s);
-//   if(dataExists(critical,data) ||dataExists(serious,data)|| dataExists(stable,data) )
-//             {
-//                 n++;
-                
+        if (!(scanf("%d", &data) == 1))
+        {
+            printf("Invalid ID\n");
+            exit(0);
+        }
+        scanf("%s", s);
+        if ((isPatientExists(critical, data) || isPatientExists(serious, data)) || isPatientExists(stable, data))
+        {
+        }
+        else
+        {
+            if (!strcmp(s, "critical"))
+                critical = insert(critical, data, s);
 
-//             }
-//    else{
-        if(!strcmp(s,"critical"))
-        critical=insert(critical,data,s);
+            else if (!strcmp(s, "serious"))
+                serious = insert(serious, data, s);
 
-        else if(!strcmp(s,"serious"))  
-        serious=insert(serious,data,s);
+            else if (!strcmp(s, "stable"))
+                stable = insert(stable, data, s);
 
-        else if(!strcmp(s,"stable"))
-        stable=insert(stable,data,s);
+            else
+            {
+                printf("Invalid Severity\n");
 
-//         else{
-//         printf("invalid severity\n");
-//         printf("enter again!!");
-//         n++;
-//         }
-//    }
-
-     
+                exit(0);
+            }
+        }
     }
-    // print(critical);
-    // print(serious);
-    // print(stable);
-    head=merge(critical,serious,stable);
+
+    head = merge(critical, serious, stable);
+
     print(head);
 
     return 0;
