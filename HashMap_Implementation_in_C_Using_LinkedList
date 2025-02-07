@@ -1,0 +1,147 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+#define TABLE_SIZE 10  
+
+typedef struct Node {
+    int key;
+    int value;
+    struct Node* next;
+} Node;
+
+Node* hash_map[TABLE_SIZE] = {NULL};  
+
+int hashFunction(int key) {
+    return key % TABLE_SIZE;
+}
+
+void insert(int key, int value) {
+    int bucket_index = hashFunction(key);
+    Node* current_node = hash_map[bucket_index];
+
+    while (current_node != NULL) {
+        if (current_node->key == key) {
+            current_node->value = value;
+            printf("Key %d updated with value %d.\n", key, value);
+            return;
+        }
+        current_node = current_node->next;
+    }
+
+    Node* new_node = (Node*)malloc(sizeof(Node)); 
+    new_node->key = key;
+    new_node->value = value;
+    new_node->next = hash_map[bucket_index];
+    hash_map[bucket_index] = new_node;
+
+    printf("Key %d inserted with value %d.\n", key, value);
+}
+
+void search(int key) {
+    int bucket_index = hashFunction(key);
+    Node* current_node = hash_map[bucket_index];
+
+    while (current_node != NULL) {
+        if (current_node->key == key) {
+            printf("Value: %d\n", current_node->value);
+            return;
+        }
+        current_node = current_node->next;
+    }
+    printf("Key %d not found.\n", key);
+}
+
+void delete(int key) {
+    int bucket_index = hashFunction(key);
+    Node* current_node = hash_map[bucket_index];
+    Node* previous_node = NULL;
+
+    while (current_node != NULL) {
+        if (current_node->key == key) {
+            if (previous_node == NULL) {
+                hash_map[bucket_index] = current_node->next;
+            } else {
+                previous_node->next = current_node->next;
+            }
+            free(current_node);
+            printf("Key %d deleted.\n", key);
+            return;
+        }
+        previous_node = current_node;
+        current_node = current_node->next;
+    }
+    printf("Key %d not found.\n", key);
+}
+
+void display() {
+    printf("\nHash Table:\n");
+    for (int i = 0; i < TABLE_SIZE; i++) {
+        printf("Index %d:", i);
+        Node* current_node = hash_map[i];
+        while (current_node != NULL) {
+            printf(" (%d, %d) ->", current_node->key, current_node->value);
+            current_node = current_node->next;
+        }
+        printf(" NULL\n");
+    }
+}
+
+void freeMemory() {
+    for (int i = 0; i < TABLE_SIZE; i++) {
+        Node* current_node = hash_map[i];
+        while (current_node != NULL) {
+            Node* temp_node = current_node;
+            current_node = current_node->next;
+            free(temp_node);
+        }
+        hash_map[i] = NULL;
+    }
+}
+
+void menu() {
+    printf("\nMenu:\n");
+    printf("1. Insert (Put)\n");
+    printf("2. Search (Get)\n");
+    printf("3. Delete (Remove)\n");
+    printf("4. Display\n");
+    printf("5. Exit\n");
+    printf("Enter your choice: ");
+}
+
+int main() {
+    int choice, key, value;
+
+    while (1) {
+        menu();
+        scanf("%d", &choice);
+
+        switch (choice) {
+            case 1:
+                printf("Enter key: ");
+                scanf("%d", &key);
+                printf("Enter value: ");
+                scanf("%d", &value);
+                insert(key, value);
+                break;
+            case 2:
+                printf("Enter key: ");
+                scanf("%d", &key);
+                search(key);
+                break;
+            case 3:
+                printf("Enter key: ");
+                scanf("%d", &key);
+                delete(key);
+                break;
+            case 4:
+                display();
+                break;
+            case 5:
+                printf("Exiting program.\n");
+                freeMemory();
+                return 0;
+            default:
+                printf("Invalid choice! Try again.\n");
+        }
+    }
+}
