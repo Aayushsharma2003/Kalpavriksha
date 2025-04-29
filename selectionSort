@@ -1,0 +1,54 @@
+#include <stdio.h>
+
+ 
+void selectionSort(int arr[], int n);
+void print_Array(int arr[], int n);
+void swap(int *a , int *b);
+
+int main() {
+    int arr[] = {46, 53, 47, 92, 31};
+    int arr_size = sizeof(arr) / sizeof(arr[0]);
+    
+    printf("Before Sorting: ");
+    print_Array(arr, arr_size);
+    
+    selectionSort(arr, arr_size);
+    
+    printf("After Sorting: ");
+    print_Array(arr, arr_size);
+    
+    return 0;
+}
+
+void swap(int *a , int *b)
+{
+    int temp=*a;
+    *a=*b;
+    *b=temp;
+}
+void selectionSort(int arr[], int arr_size) {
+    for (int i = 0; i < arr_size - 1; i++) {
+      
+         
+        int minimum_index = i;
+        
+         
+        for (int j = i + 1; j < arr_size; j++) {
+            if (arr[j] < arr[minimum_index]) {
+              
+                 
+                minimum_index = j;
+            }
+        }
+        
+        swap(&arr[i] , &arr[minimum_index]);
+       
+    }
+}
+
+void print_Array(int arr[], int arr_size) {
+    for (int itr = 0; itr < arr_size; itr++) {
+        printf("%d ", arr[itr]);
+    }
+    printf("\n");
+}
